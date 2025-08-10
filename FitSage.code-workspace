@@ -1,0 +1,21 @@
+{
+    "folders": [
+      { "path": "." }
+    ],
+    "settings": {
+      "java.configuration.updateBuildConfiguration": "automatic",
+      "files.exclude": {
+        "**/target": true
+      },
+      "editor.formatOnSave": true
+    },
+    "extensions": {
+      "recommendations": [
+        "vscjava.vscode-java-pack",
+        "pivotal.vscode-boot-dev-pack",
+        "redhat.vscode-xml",
+        "richardwillis.vscode-gradle"
+      ]
+    }
+  }
+  
