@@ -8,11 +8,15 @@ import fitsage.model.BodyParameter;
 import fitsage.model.Meal;
 import fitsage.model.Workout;
 import fitsage.services.AIService;
+
+import java.util.Arrays;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
-
+//  Most of the prompt are hardcoded just ot learn the behaviour of AI.
 @Service
 public class AIServiceImpl implements AIService {
 
@@ -28,25 +32,31 @@ public class AIServiceImpl implements AIService {
     }
 
     @Override
-    public Workout generateWorkoutPlan(BodyParameter params) {
+    public List<Workout> generateWorkoutPlan(BodyParameter params) {
         String prompt = String.format("""
-            Generate ONE workout plan as a valid JSON object.
-            Do NOT wrap inside "workoutPlan" or arrays.
-            Return ONLY this JSON structure (no explanations, no markdown):
+  
+Generate a FULL workout plan as a JSON array of exercises.
 
-            {
-              "name": "string",
-              "type": "string",
-              "sets": 3,
-              "reps": 10,
-              "weight": 50,
-              "duration": 30,
-              "caloriesBurned": 200
-            }
+Schema (every field MUST be valid JSON and properly typed):
+{
+  "name": "string",
+  "type": "string",
+  "sets": int,
+  "reps": int,
+  "weight": int,
+  "duration": int,
+  "caloriesBurned": int
+}
 
-            User: %d years old, %s, %d cm, %.1f kg
-            Goal: %s
-            """,
+Rules:
+- Return ONLY a JSON array (no markdown, no ```).
+- All numbers must be integers, not strings or words.
+- Do NOT use phrases like "as many as possible". If unknown, put a number (e.g., 10).
+- Include 5–8 exercises covering different muscle groups.
+
+User: %d years old, %s, %d cm, %.1f kg
+Goal: %s
+""",
             params.getAge(),
             params.getGender() == 0 ? "male" : "female",
             (int) params.getHeight(),
@@ -58,32 +68,36 @@ public class AIServiceImpl implements AIService {
 
         try {
             JsonNode json = mapper.readTree(response);
-            String text = json.at("/candidates/0/content/parts/0/text").asText("{}");
-            return mapper.readValue(cleanJson(text), Workout.class);
+            String text = json.at("/candidates/0/content/parts/0/text").asText("[]");
+            String clean = cleanJson(text);
+            return Arrays.asList(mapper.readValue(clean, Workout[].class));
         } catch (Exception e) {
             throw new RuntimeException("Failed to parse AI workout response: " + response, e);
         }
     }
 
     @Override
-    public Meal generateMealPlan(BodyParameter params) {
+    public List<Meal> generateMealPlan(BodyParameter params) {
         String prompt = String.format("""
-            Generate ONE meal plan as a valid JSON object.
-            Do NOT wrap inside "meals" or arrays.
-            Return ONLY this JSON structure (no explanations, no markdown):
+             Generate a FULL daily meal plan as a JSON array of meals.
+    Each meal must follow this schema:
+    {
+      "name": "string",
+      "calories": 600,
+      "protein": 40,
+      "carbs": 50,
+      "fats": 20
+    }
 
-            {
-              "name": "string",
-              "calories": 600,
-              "protein": 40,
-              "carbs": 50,
-              "fats": 20
-            }
+    Rules:
+    - Return ONLY a JSON array (no markdown, no explanations).
+    - Include 3–5 meals for the day (breakfast, lunch, dinner, optional snacks).
+    - Adapt portions to user's dietary preference and goal.
 
-            User: %d years old, %s, %d cm, %.1f kg
-            Goal: %s
-            Dietary preference: %s
-            Allergies: %s
+    User: %d years old, %s, %d cm, %.1f kg
+    Goal: %s
+    Dietary preference: %s
+    Allergies: %s
             """,
             params.getAge(),
             params.getGender() == 0 ? "male" : "female",
@@ -98,8 +112,9 @@ public class AIServiceImpl implements AIService {
 
         try {
             JsonNode json = mapper.readTree(response);
-            String text = json.at("/candidates/0/content/parts/0/text").asText("{}");
-            return mapper.readValue(cleanJson(text), Meal.class);
+            String text = json.at("/candidates/0/content/parts/0/text").asText("[]");
+            String clean = cleanJson(text);
+            return Arrays.asList(mapper.readValue(clean, Meal[].class));
         } catch (Exception e) {
             throw new RuntimeException("Failed to parse AI meal response: " + response, e);
         }
@@ -129,8 +144,15 @@ public class AIServiceImpl implements AIService {
 
     private String cleanJson(String text) {
         // strip markdown fences if Gemini adds them
-        return text.replaceAll("(?s)```json", "")
-                   .replaceAll("(?s)```", "")
-                   .trim();
+           // Remove markdown ```json ... ```
+    String clean = text.replaceAll("```json", "")
+    .replaceAll("```", "")
+    .trim();
+
+// Replace common bad outputs like "as many as possible"
+clean = clean.replaceAll("(?i)as many as possible", "10");
+
+return clean;
+
     }
 }

@@ -8,7 +8,7 @@ import java.util.UUID;
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
 public class WorkoutDto {
     private UUID id;
-    private UUID userId;
+    private UserDto user;
     private String name;
     private String type;
     private int sets;

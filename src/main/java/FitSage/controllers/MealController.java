@@ -1,9 +1,11 @@
 package fitsage.controllers;
 
+import fitsage.dto.MealDto;
+import fitsage.mappers.MealMapper;
 import fitsage.model.Meal;
 import fitsage.services.MealService;
 import org.springframework.web.bind.annotation.*;
-
+import org.springframework.http.ResponseEntity;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
@@ -26,8 +28,10 @@ public class MealController {
 
     
     @GetMapping("/{userId}")
-    public List<Meal> getUserMeals(@PathVariable UUID userId) {
-        return mealService.getMealsByUser(userId);
+    public ResponseEntity<List<MealDto>> getUserMeals(@PathVariable UUID userId) {
+        List<Meal> meals =  mealService.getMealsByUser(userId);
+        List<MealDto> response  = meals.stream().map(MealMapper::toDto).toList();
+        return ResponseEntity.ok(response);
     }
 
     

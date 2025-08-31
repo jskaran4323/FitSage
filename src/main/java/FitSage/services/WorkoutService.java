@@ -8,7 +8,7 @@ import java.util.UUID;
 import fitsage.model.Workout;
 
 public interface WorkoutService {
-    Workout addWorkout(UUID userId, Workout workout);
+    Workout addWorkout(UUID userId, Workout workoutDto);
     List<Workout> getWorkoutsByUser(UUID userId);
     List<Workout> getWorkoutsByUserAndDate(UUID userId, LocalDate date);
     void deleteWorkout(UUID workoutId);

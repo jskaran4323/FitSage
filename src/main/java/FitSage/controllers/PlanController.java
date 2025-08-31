@@ -1,35 +1,22 @@
 package fitsage.controllers;
 
-import fitsage.mappers.MealMapper;
-import fitsage.mappers.WorkoutMapper;
-import fitsage.model.*;
-import fitsage.repositories.BodyParameterRepository;
-import fitsage.services.AIService;
-import lombok.RequiredArgsConstructor;
+import fitsage.impl.PlanServiceImpl;
+import fitsage.services.PlanService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
 import java.util.UUID;
+
 @RestController
-@RequestMapping("api/plans")
-@RequiredArgsConstructor
+@RequestMapping("/api/plans")
 public class PlanController {
 
-    private final AIService aiService;
-    private final BodyParameterRepository bodyParamRepo;
+    @Autowired
+    private PlanServiceImpl planService;
 
     @PostMapping("/generate/{userId}")
     public ResponseEntity<?> generatePlans(@PathVariable UUID userId) {
-        BodyParameter params = bodyParamRepo.findByUserId(userId)
-                .orElseThrow(() -> new RuntimeException("User profile not found"));
-
-        Workout workoutPlan = aiService.generateWorkoutPlan(params);
-        Meal mealPlan = aiService.generateMealPlan(params);
-
-        return ResponseEntity.ok(Map.of(
-                "workout", WorkoutMapper.toDto(workoutPlan),
-                "meal", MealMapper.toDto(mealPlan)
-        ));
+        return ResponseEntity.ok(planService.generatePlans(userId));
     }
 }

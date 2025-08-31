@@ -1,8 +1,12 @@
 package fitsage.controllers;
 
 
+import fitsage.dto.WorkoutDto;
+import fitsage.mappers.WorkoutMapper;
 import fitsage.model.Workout;
 import fitsage.services.WorkoutService;
+
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -27,8 +31,10 @@ public class WorkoutController {
 
     
     @GetMapping("/{userId}")
-    public List<Workout> getUserWorkouts(@PathVariable UUID userId) {
-        return workoutService.getWorkoutsByUser(userId);
+    public ResponseEntity<List<WorkoutDto>> getUserWorkouts(@PathVariable UUID userId) {
+        List<Workout> workouts = workoutService.getWorkoutsByUser(userId);
+         List<WorkoutDto> response = workouts.stream().map(WorkoutMapper::toDto).toList();
+        return ResponseEntity.ok(response);
     }
 
     
