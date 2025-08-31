@@ -1,6 +1,7 @@
 package fitsage.controllers;
 
 import fitsage.dto.MealDto;
+import fitsage.dto.WorkoutDto;
 import fitsage.mappers.MealMapper;
 import fitsage.model.Meal;
 import fitsage.services.MealService;
@@ -9,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
+
 
 @RestController
 @RequestMapping("/api/meals")
@@ -45,4 +47,19 @@ public class MealController {
     public void deleteMeal(@PathVariable UUID mealId) {
         mealService.deleteMeal(mealId);
     }
+
+    @GetMapping("/shared")
+    public  ResponseEntity<List<MealDto>> getSharedMeals () {
+        return ResponseEntity.ok(mealService.getSharedMeals());
+        
+    }
+    @PostMapping("/{mealId}/share")
+public ResponseEntity<MealDto> sharemeal(
+        @PathVariable UUID mealId,
+        @RequestParam boolean shared
+) {
+    return ResponseEntity.ok(mealService.shareMeal(mealId, shared));
+}
+
+    
 }

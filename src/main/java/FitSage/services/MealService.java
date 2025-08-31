@@ -4,6 +4,8 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
+import fitsage.dto.MealDto;
+
 import fitsage.model.Meal;
 
 public interface MealService {
@@ -11,4 +13,6 @@ public interface MealService {
     List<Meal> getMealsByUser(UUID userId);
     List<Meal> getMealsByUserAndDate(UUID userId, LocalDate date);
     void deleteMeal(UUID mealId);
+    MealDto shareMeal(UUID mealId, boolean shared);
+    List<MealDto> getSharedMeals();
 }

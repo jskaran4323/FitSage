@@ -3,8 +3,11 @@ package fitsage.impl;
 
 
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import fitsage.dto.WorkoutDto;
+import fitsage.mappers.WorkoutMapper;
 import fitsage.model.User;
 import fitsage.model.Workout;
 import fitsage.repositories.UserRepository;
@@ -21,6 +24,8 @@ public class WorkoutServiceImpl implements WorkoutService {
 
     private final WorkoutRepository workoutRepository;
     private final UserRepository userRepository;
+     @Autowired
+    private WorkoutMapper workoutMapper;
 
     public WorkoutServiceImpl(WorkoutRepository workoutRepository, UserRepository userRepository) {
         this.workoutRepository = workoutRepository;
@@ -54,6 +59,23 @@ public class WorkoutServiceImpl implements WorkoutService {
     public void deleteWorkout(UUID workoutId) {
         workoutRepository.deleteById(workoutId);
     }
+
+    @Override
+    public WorkoutDto shareWorkout(UUID workoutId, boolean shared) {
+        Workout workout = workoutRepository.findById(workoutId)
+                .orElseThrow(() -> new RuntimeException("Workout not found"));
+
+        workout.setShared(shared);
+        Workout saved = workoutRepository.save(workout);
+
+        return workoutMapper.toDto(saved);
+    }
+
+    @Override
+    public List<WorkoutDto> getSharedWorkout() {
+       return workoutRepository.findBySharedTrue().stream().map(WorkoutMapper::toDto).toList();
+    }
+
 
   
 }

@@ -1,9 +1,11 @@
 package fitsage.mappers;
 
+import org.springframework.stereotype.Component;
+
 import fitsage.dto.UserDto;
 import fitsage.dto.WorkoutDto;
 import fitsage.model.Workout;
-
+@Component
 public class WorkoutMapper {
 
     public static WorkoutDto toDto(Workout entity) {

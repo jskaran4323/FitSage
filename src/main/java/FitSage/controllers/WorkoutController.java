@@ -48,4 +48,21 @@ public class WorkoutController {
     public void deleteWorkout(@PathVariable UUID workoutId) {
         workoutService.deleteWorkout(workoutId);
     }
+
+    // Get all shared workouts
+@GetMapping("/shared")
+public ResponseEntity<List<WorkoutDto>> getSharedWorkouts() {
+    return ResponseEntity.ok(workoutService.getSharedWorkout());
+}
+
+// Toggle share
+@PostMapping("/{workoutId}/share")
+public ResponseEntity<WorkoutDto> shareWorkout(
+        @PathVariable UUID workoutId,
+        @RequestParam boolean shared
+) {
+    return ResponseEntity.ok(workoutService.shareWorkout(workoutId, shared));
+}
+
+
 }

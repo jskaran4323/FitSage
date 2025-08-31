@@ -1,8 +1,12 @@
 package fitsage.impl;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import fitsage.model.User;
+import fitsage.dto.MealDto;
+import fitsage.mappers.MealMapper;
+
 import fitsage.model.Meal;
 import fitsage.repositories.MealRepository;
 import fitsage.services.MealService;
@@ -23,6 +27,9 @@ public class MealServiceImpl implements MealService {
         this.mealRepository = mealRepository;
         this.userRepository = userRepository;
     }
+
+    @Autowired
+    private MealMapper mealMapper;
 
     @Override
     public Meal addMeal(UUID userId, Meal meal) {
@@ -50,5 +57,23 @@ public class MealServiceImpl implements MealService {
     @Override
     public void deleteMeal(UUID mealId) {
         mealRepository.deleteById(mealId);
+    }
+
+    @Override
+    public MealDto shareMeal(UUID mealId, boolean shared) {
+        Meal meal  = mealRepository.findById(mealId).orElseThrow(() -> new RuntimeException("Workout not found"));
+        
+        meal.setShared(shared);
+        Meal saved =  mealRepository.save(meal);
+        return mealMapper.toDto(saved);
+            
+    }
+
+    @Override
+    public List<MealDto> getSharedMeals() {
+        return mealRepository.findBySharedTrue()
+        .stream()
+        .map(MealMapper::toDto)
+        .toList();
     }
 }

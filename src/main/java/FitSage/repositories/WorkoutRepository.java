@@ -11,4 +11,5 @@ import java.util.UUID;
 public interface WorkoutRepository extends JpaRepository<Workout, UUID> {
     List<Workout> findByUserId(UUID userId);
     List<Workout> findByUserIdAndDate(UUID userId, LocalDate date);
+    List<Workout> findBySharedTrue(); 
 }

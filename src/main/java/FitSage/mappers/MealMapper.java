@@ -1,9 +1,11 @@
 package fitsage.mappers;
 
+import org.springframework.stereotype.Component;
+
 import fitsage.dto.MealDto;
 import fitsage.dto.UserDto;
 import fitsage.model.Meal;
-
+@Component
 public class MealMapper {
     
 
