@@ -32,9 +32,9 @@ public class UserServiceImpl implements UserService{
         UserType userType = request.getType();
         System.out.println(userType);
         if (userType == null) {
-            userType = UserType.VIEWER;
+            userType = UserType.USER;
         }
-        if (userType == UserType.ADMIN || userType == UserType.MANAGER) {
+        if (userType == UserType.ADMIN) {
             throw new IllegalArgumentException("Cannot assign reserved roles.");
         }
     
