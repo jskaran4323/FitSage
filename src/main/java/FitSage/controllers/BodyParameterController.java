@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/body-parameters")
+@RequestMapping("api/body-parameters")
 @RequiredArgsConstructor
 public class BodyParameterController {
 

@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 import java.util.UUID;
 @RestController
-@RequestMapping("/community")
+@RequestMapping("api/community")
 @RequiredArgsConstructor
 public class CommunityController {
 
