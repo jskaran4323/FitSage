@@ -5,10 +5,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 public enum UserType {
     ADMIN(0),
-    MANAGER(1),
-    DEVELOPER(2),
-    TESTER(3),
-    VIEWER(4);
+    USER(1);
 
     private final int value;
 

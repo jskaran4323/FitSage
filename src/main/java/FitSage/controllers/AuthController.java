@@ -59,7 +59,7 @@ public class AuthController {
                 .build();
 
         // Return user info (not token)
-        LoginResponse loginResponse = new LoginResponse(user.getUsername(), user.getUserTypeEnum().name());
+        LoginResponse loginResponse = new LoginResponse(user.getId(), user.getUserTypeEnum().name(), user.getUsername());
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, cookie.toString())
